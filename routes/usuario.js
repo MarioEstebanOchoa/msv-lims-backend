@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
     var desde = req.query.desde || 0;
     desde = Number(desde);
 
-    Usuario.find({}, 'nombre email img role')
+    Usuario.find({}, 'nombre email img role google')
         .skip(desde)
         .limit(5)
         .exec(
@@ -44,18 +44,25 @@ app.get('/', (req, res) => {
         )
 });
 
+
+
 //================================
 //Crea un nuevo usuario
 //================================
-app.post('/', mdAutenticacion.verificaToken, (req, res) => {
+app.post('/', (req, res) => {
 
     var body = req.body;
 
     var usuario = new Usuario({
         nombre: body.nombre,
-        email: body.email,
+        username: body.username,
         password: bcrypt.hashSync(body.password, 10),
-        img: body.img,
+        email: body.email,
+        telf: body.telf,
+        pais: body.pais,
+        provincia: body.provincia,
+        ciudad: body.ciudad,
+        direccion: body.direccion,
         role: body.role
     });
 
@@ -105,8 +112,13 @@ app.put('/:id', mdAutenticacion.verificaToken, (req, res) => {
 
 
         usuario.nombre = body.nombre;
+        usuario.username = body.username;
         usuario.email = body.email;
-        usuario.role = body.role;
+        usuario.telf = body.telf;
+        usuario.pais = body.pais;
+        usuario.provincia = body.provincia;
+        usuario.ciudad = body.ciudad;
+        usuario.direccion = body.direccion;
 
         usuario.save((err, usuarioGuardado) => {
             if (err) {
