@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 // Importar rutas
 var appRoutes = require('./routes/app')
 var usuarioRoutes = require('./routes/usuario')
+var departamentoRoutes = require('./routes/departamento')
 var loginRoutes = require('./routes/login')
 var hospitalRoutes = require('./routes/hospital')
 var medicoRoutes = require('./routes/medico')
@@ -46,6 +47,7 @@ mongoose.connection.openUri('mongodb://localhost:27017/msv-lims-db', {
 //Rutas
 app.use('/login', loginRoutes);
 app.use('/usuario', usuarioRoutes);
+app.use('/departamento', departamentoRoutes);
 app.use('/hospital', hospitalRoutes);
 app.use('/medico', medicoRoutes);
 app.use('/busqueda', busquedaRoutes);

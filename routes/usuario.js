@@ -12,12 +12,8 @@ var Usuario = require('../models/usuario');
 
 app.get('/', (req, res) => {
 
-    var desde = req.query.desde || 0;
-    desde = Number(desde);
 
-    Usuario.find({}, 'nombre email img role google')
-        .skip(desde)
-        .limit(5)
+    Usuario.find({}, 'nombre username email role')
         .exec(
             (err, usuarios) => {
 
@@ -44,7 +40,39 @@ app.get('/', (req, res) => {
         )
 });
 
+//================================
+//Obtener un usuario
+//================================
+app.get('/:id', (req, res) => {
 
+    var id = req.params.id;
+
+    Usuario.findById(id, (err, usuario) => {
+
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                mensaje: 'Error al buscar usuario',
+                errors: err
+            })
+        }
+
+        if (!usuario) {
+            return res.status(400).json({
+                ok: false,
+                mensaje: 'El usuario con el id: ' + id + ' no existe',
+                errors: { mensaje: 'No existe un usuario con ese ID' }
+            })
+        }
+
+        res.status(200).json({
+            ok: true,
+            usuario: usuario
+        })
+
+    })
+
+})
 
 //================================
 //Crea un nuevo usuario
@@ -93,6 +121,7 @@ app.put('/:id', mdAutenticacion.verificaToken, (req, res) => {
     var id = req.params.id;
     var body = req.body;
 
+
     Usuario.findById(id, (err, usuario) => {
         if (err) {
             return res.status(500).json({
@@ -110,9 +139,15 @@ app.put('/:id', mdAutenticacion.verificaToken, (req, res) => {
             })
         }
 
+        console.log(body.password);
+
+        if (body.password) {
+            usuario.password = bcrypt.hashSync(body.password, 10)
+        }
 
         usuario.nombre = body.nombre;
         usuario.username = body.username;
+        usuario.role = body.role;
         usuario.email = body.email;
         usuario.telf = body.telf;
         usuario.pais = body.pais;
